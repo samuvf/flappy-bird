@@ -22,10 +22,16 @@ local BACKGROUND_LOOPING_POINT = 413 -- similar to the begining of the image as 
 require 'Bird'
 local bird = Bird()
 
+require 'Pipe'
+local pipes = {}
+local time = 0
+
 function love.load()
   love.graphics.setDefaultFilter('nearest', 'nearest')
 
   love.window.setTitle('Flappy Bird')
+
+  math.randomseed(os.time())
 
   push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,{
     vsync = true,
@@ -45,6 +51,20 @@ function love.update(dt)
 
   groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
   
+  -- every 2 seconds insert a Pipe into the table
+  time = time + dt
+  if time > 2 then
+    table.insert(pipes, Pipe())
+    time = 0
+  end
+
+  for k, pipe in pairs(pipes) do
+    pipe:update(dt)
+    if (pipe.x < -pipe.width) then
+      table.remove(pipe, k)
+    end
+  end
+
   bird:update(dt)
 
   love.keyboard.keysPressed = {} -- flushes whichever key is in the table as to not keep dy = -5 forever
@@ -65,6 +85,11 @@ end
 function love.draw()
   push:start()
     love.graphics.draw(background, -backgroundScroll, 0)
+
+    for k, pipe in pairs(pipes) do
+      pipe:render()
+    end
+
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
 
     bird:render()
