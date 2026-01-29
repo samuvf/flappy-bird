@@ -2,18 +2,26 @@ Pipe = Class{}
 
 local PIPE_IMAGE = love.graphics.newImage('pipe.png')
 
-function Pipe:init() 
-  self.x = VIRTUAL_WIDTH
-  self.y = math.random(VIRTUAL_HEIGHT - 50, VIRTUAL_HEIGHT / 4)
+PIPE_WIDTH = 70
+PIPE_HEIGHT = 288
 
-  self.width = PIPE_IMAGE:getWidth()
+function Pipe:init(orientation, y)
+  self.x = VIRTUAL_WIDTH
+  self.y = y
+  self.orientation = orientation
 end
 
-local pipeScroll = -60
-function Pipe:update(dt)
-  self.x = self.x + pipeScroll * dt
+function Pipe:update(dt) 
+
 end
 
 function Pipe:render() 
-  love.graphics.draw(PIPE_IMAGE, self.x, self.y)
+  love.graphics.draw(
+    PIPE_IMAGE, 
+    self.x,
+    self.orientation == 'top' and self.y + PIPE_HEIGHT or self.y, -- plus PIPE_HEIGHT because when the inversion happens the y goes above the screen
+    0, -- rotation
+    1, -- x scale
+    self.orientation == 'top' and -1 or 1 -- y scale (-1 inverts)
+  )
 end

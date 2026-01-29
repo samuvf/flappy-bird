@@ -23,8 +23,15 @@ require 'Bird'
 local bird = Bird()
 
 require 'Pipe'
-local pipes = {}
-local time = 0
+
+require 'PipePair'
+
+local pipePairs = {}
+local spawnTime = 0
+
+-- stores the last y as to no repeat the same in the next pipe
+-- creating a more dynamic pipes reendering
+local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
 function love.load()
   love.graphics.setDefaultFilter('nearest', 'nearest')
@@ -52,16 +59,26 @@ function love.update(dt)
   groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
   
   -- every 2 seconds insert a Pipe into the table
-  time = time + dt
-  if time > 2 then
-    table.insert(pipes, Pipe())
-    time = 0
-  end
+  spawnTime = spawnTime + dt
+  if spawnTime > 2 then
+    -- defines y limites for the pipe to spawn
+    -- and where the gap can begin
+    local y = math.max(-PIPE_HEIGHT + 10, math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
+    lastY = y
 
-  for k, pipe in pairs(pipes) do
-    pipe:update(dt)
-    if (pipe.x < -pipe.width) then
-      table.remove(pipe, k)
+    table.insert(pipePairs, PipePair(y))
+    spawnTime = 0
+  end
+  -- keep updating each pipePair present in the table 
+  for k, pipePair in pairs(pipePairs) do
+    pipePair:update(dt)
+  end
+  -- removes pipePair from table if it has trespassed the left edge of the screen
+  -- another loop is recommended, beacause removing elements 
+  -- while operating an update on them can cause bugs (flinch pipes)
+  for k, pipePair in pairs(pipePairs) do
+    if (pipePair.remove) then
+      table.remove(pipePair, k)
     end
   end
 
@@ -86,8 +103,8 @@ function love.draw()
   push:start()
     love.graphics.draw(background, -backgroundScroll, 0)
 
-    for k, pipe in pairs(pipes) do
-      pipe:render()
+    for k, pipePair in pairs(pipePairs) do
+      pipePair:render()
     end
 
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - 16)
