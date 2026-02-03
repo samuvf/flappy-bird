@@ -33,6 +33,9 @@ local spawnTime = 0
 -- creating a more dynamic pipes reendering
 local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
+-- keep scrollling if true else pause game
+local scrolling = true
+
 function love.load()
   love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -54,35 +57,45 @@ function love.resize(w, h)
 end
 
 function love.update(dt)
-  backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
+  if scrolling then
+    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt) % BACKGROUND_LOOPING_POINT
 
-  groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
-  
-  -- every 2 seconds insert a Pipe into the table
-  spawnTime = spawnTime + dt
-  if spawnTime > 2 then
-    -- defines y limites for the pipe to spawn
-    -- and where the gap can begin
-    local y = math.max(-PIPE_HEIGHT + 10, math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
-    lastY = y
+    groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt) % VIRTUAL_WIDTH
+    
+    -- every 2 seconds insert a Pipe into the table
+    spawnTime = spawnTime + dt
+    if spawnTime > 2 then
+      -- defines y limites for the pipe to spawn
+      -- and where the gap can begin
+      local y = math.max(-PIPE_HEIGHT + 10, math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
+      lastY = y
 
-    table.insert(pipePairs, PipePair(y))
-    spawnTime = 0
-  end
-  -- keep updating each pipePair present in the table 
-  for k, pipePair in pairs(pipePairs) do
-    pipePair:update(dt)
-  end
-  -- removes pipePair from table if it has trespassed the left edge of the screen
-  -- another loop is recommended, beacause removing elements 
-  -- while operating an update on them can cause bugs (flinch pipes)
-  for k, pipePair in pairs(pipePairs) do
-    if (pipePair.remove) then
-      table.remove(pipePair, k)
+      table.insert(pipePairs, PipePair(y))
+      spawnTime = 0
     end
-  end
 
-  bird:update(dt)
+    -- keep updating each pipePair present in the table 
+    for k, pipePair in pairs(pipePairs) do
+      pipePair:update(dt)
+      -- check for collision between bird and pipes
+      for l, pipe in pairs(pipePair.pipes) do
+        if bird:collision(pipe) then
+          -- pauses game
+          scrolling = false
+        end
+      end
+    end
+    -- removes pipePair from table if it has trespassed the left edge of the screen
+    -- another loop is recommended, beacause removing elements 
+    -- while operating an update on them can cause bugs (flinch pipes)
+    for k, pipePair in pairs(pipePairs) do
+      if (pipePair.remove) then
+        table.remove(pipePair, k)
+      end
+    end
+
+    bird:update(dt)
+  end
 
   love.keyboard.keysPressed = {} -- flushes whichever key is in the table as to not keep dy = -5 forever
 end
