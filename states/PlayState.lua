@@ -20,7 +20,7 @@ function PlayState:update(dt)
   if spawnTime > 2 then
     -- defines y limites for the pipe to spawn
     -- and where the gap can begin
-    local y = math.max(-PIPE_HEIGHT + 10, math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
+    local y = math.max(-PIPE_HEIGHT + 50, math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
     lastY = y
     table.insert(pipePairs, PipePair(y))
     spawnTime = 0
@@ -31,9 +31,13 @@ function PlayState:update(dt)
     -- check for collision between bird and pipes
     for l, pipe in pairs(pipePair.pipes) do
       if bird:collision(pipe) then
-        
+        gStateMachine:change('gameover')
       end
     end
+  end
+
+  if bird.y + bird.height > VIRTUAL_HEIGHT or bird.y < 0 then
+    gStateMachine:change('gameover')
   end
   -- removes pipePair from table if it has trespassed the left edge of the screen
   -- another loop is recommended, beacause removing elements 
