@@ -1,59 +1,62 @@
 PlayState = Class{__includes = BaseState}
 
-require 'Bird'
-require 'PipePair'
-require 'Pipe'
+PIPE_SPEED = 60
+PIPE_WIDTH = 70
+PIPE_HEIGHT = 288
+
+BIRD_WIDTH = 38
+BIRD_HEIGHT = 24
 
 function PlayState:init() 
-  bird = Bird()
-  pipePairs = {}
-  spawnTime = 0
+  self.bird = Bird()
+  self.pipePairs = {}
+  self.spawnTime = 0
 
   -- stores the last y as to no repeat the same in the next pipe
   -- creating a more dynamic pipes reendering
-  lastY = -PIPE_HEIGHT + math.random(80) + 20
+  self.lastY = -PIPE_HEIGHT + math.random(80) + 20
 end
 
 function PlayState:update(dt)
   -- every 2 seconds insert a Pipe into the table
-  spawnTime = spawnTime + dt
-  if spawnTime > 2 then
+  self.spawnTime = self.spawnTime + dt
+  if self.spawnTime > 2 then
     -- defines y limites for the pipe to spawn
     -- and where the gap can begin
-    local y = math.max(-PIPE_HEIGHT + 50, math.min(lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
-    lastY = y
-    table.insert(pipePairs, PipePair(y))
-    spawnTime = 0
+    local y = math.max(-PIPE_HEIGHT + 50, math.min(self.lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
+    self.lastY = y
+    table.insert(self.pipePairs, PipePair(y))
+    self.spawnTime = 0
   end
   -- keep updating each pipePair present in the table 
-  for k, pipePair in pairs(pipePairs) do
+  for k, pipePair in pairs(self.pipePairs) do
     pipePair:update(dt)
     -- check for collision between bird and pipes
     for l, pipe in pairs(pipePair.pipes) do
-      if bird:collision(pipe) then
+      if self.bird:collision(pipe) then
         gStateMachine:change('gameover')
       end
     end
   end
 
-  if bird.y + bird.height > VIRTUAL_HEIGHT or bird.y < 0 then
+  if self.bird.y + BIRD_HEIGHT > VIRTUAL_HEIGHT or self.bird.y < 0 then
     gStateMachine:change('gameover')
   end
   -- removes pipePair from table if it has trespassed the left edge of the screen
   -- another loop is recommended, beacause removing elements 
   -- while operating an update on them can cause bugs (flinch pipes)
-  for k, pipePair in pairs(pipePairs) do
+  for k, pipePair in pairs(self.pipePairs) do
     if (pipePair.remove) then
-      table.remove(pipePair, k)
+      table.remove(self.pipePairs, k)
     end
   end
 
-  bird:update(dt)
+  self.bird:update(dt)
 end
 
 function PlayState:render()
-  for k, pipePair in pairs(pipePairs) do
+  for k, pipePair in pairs(self.pipePairs) do
     pipePair:render()
   end
-  bird:render()
+  self.bird:render()
 end
