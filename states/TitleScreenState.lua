@@ -11,4 +11,5 @@ function TitleScreenState:render()
   love.graphics.printf('Flappy Bird', 0, 64, VIRTUAL_WIDTH, 'center')
   love.graphics.setFont(mediumFont)
   love.graphics.printf('Press Enter', 0, 100, VIRTUAL_WIDTH, 'center')
+  love.graphics.print('Highest Score: ' .. tostring(highestScore), 10, 10)
 end

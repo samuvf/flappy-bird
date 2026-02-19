@@ -1,5 +1,6 @@
 Pipe = Class{}
 
+-- since we only want the image loaded once, not per instantation, define it externally
 local PIPE_IMAGE = love.graphics.newImage('pipe.png')
 
 PIPE_WIDTH = 70
@@ -9,8 +10,8 @@ function Pipe:init(orientation, y)
   self.x = VIRTUAL_WIDTH
   self.y = y
 
-  self.width = PIPE_IMAGE:getWidth()
-  self.height =  PIPE_IMAGE:getHeight()
+  self.width = PIPE_WIDTH
+  self.height =  PIPE_HEIGHT
 
   self.orientation = orientation
 end

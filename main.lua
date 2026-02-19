@@ -1,6 +1,15 @@
 push = require 'push'
 Class = require 'class'
 
+require 'Bird'
+require 'Pipe'
+require 'PipePair'
+
+require 'StateMachine'
+require 'states/PlayState'
+require 'states/TitleScreenState'
+require 'states/GameOverState'
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
@@ -18,25 +27,15 @@ local GROUND_SCROLL_SPEED = 60
 
 local BACKGROUND_LOOPING_POINT = 413 -- similar to the begining of the image as to not be noticeable
 
-require 'StateMachine'
-require 'states/PlayState'
-require 'states/TitleScreenState'
-
-require 'Bird'
-local bird = Bird()
-
-require 'Pipe'
-require 'PipePair'
-
 function love.load()
   love.graphics.setDefaultFilter('nearest', 'nearest')
 
   love.window.setTitle('Flappy Bird')
 
   smallFont = love.graphics.newFont('font.ttf', 8)
-  mediumFont = love.graphics.newFont('font.ttf', 14)
-  flappyFont = love.graphics.newFont('font.ttf', 28)
-  hugeFont = love.graphics.newFont('font.ttf', 56)
+  mediumFont = love.graphics.newFont('flappy.ttf', 14)
+  flappyFont = love.graphics.newFont('flappy.ttf', 28)
+  hugeFont = love.graphics.newFont('flappy.ttf', 56)
   love.graphics.setFont(flappyFont)
 
   math.randomseed(os.time())
@@ -49,7 +48,8 @@ function love.load()
 
   gStateMachine = StateMachine {
     ['title'] = function() return  TitleScreenState() end,
-    ['play'] = function() return PlayState() end 
+    ['play'] = function() return PlayState() end,
+    ['gameover'] = function() return GameOverState() end
   }
   gStateMachine:change('title')
 
@@ -70,7 +70,7 @@ function love.update(dt)
 end
 
 function love.keypressed(key)
-  love.keyboard.keysPressed[key] = true -- stores key pressed to the table andd assignes it to true
+  love.keyboard.keysPressed[key] = true -- stores key pressed to the table andd assigns it to true
 
   if key == 'escape' then
     love.event.quit()

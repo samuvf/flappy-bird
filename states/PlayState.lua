@@ -7,6 +7,8 @@ PIPE_HEIGHT = 288
 BIRD_WIDTH = 38
 BIRD_HEIGHT = 24
 
+score = 0
+
 function PlayState:init() 
   self.bird = Bird()
   self.pipePairs = {}
@@ -31,11 +33,19 @@ function PlayState:update(dt)
   -- keep updating each pipePair present in the table 
   for k, pipePair in pairs(self.pipePairs) do
     pipePair:update(dt)
-    -- check for collision between bird and pipes
+  end
+  -- check for collision between bird and pipes
+  for k, pipePair in pairs(self.pipePairs) do
     for l, pipe in pairs(pipePair.pipes) do
       if self.bird:collision(pipe) then
         gStateMachine:change('gameover')
       end
+    end
+  end
+  -- increase score by 1 each time the bird passes through a pipepair
+  for k, pipePair in pairs(self.pipePairs) do
+    if pipePair.x + PIPE_WIDTH < VIRTUAL_WIDTH/2 and pipePair.x > 185 then
+      score = score + 1
     end
   end
   -- gameover if we get to the ground
@@ -59,4 +69,7 @@ function PlayState:render()
     pipePair:render()
   end
   self.bird:render()
+
+  love.graphics.print('Score: ' .. tostring(score), 10, 10)
 end
+

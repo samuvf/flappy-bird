@@ -7,8 +7,8 @@ function PipePair:init(y)
   self.y = y
 
   self.pipes = {
-    top = Pipe('top', self.y),
-    botton = Pipe('botton', self.y + PIPE_HEIGHT + GAP_HEIGTH) -- already pulls the y to its right position if botton pipe
+    ['top'] = Pipe('top', self.y),
+    ['botton'] = Pipe('botton', self.y + PIPE_HEIGHT + GAP_HEIGTH) -- already pulls the y to its right position if botton pipe
   }
 
   self.remove = false
