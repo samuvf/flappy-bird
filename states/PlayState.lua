@@ -38,7 +38,7 @@ function PlayState:update(dt)
       end
     end
   end
-
+  -- gameover if we get to the ground
   if self.bird.y + BIRD_HEIGHT > VIRTUAL_HEIGHT or self.bird.y < 0 then
     gStateMachine:change('gameover')
   end
