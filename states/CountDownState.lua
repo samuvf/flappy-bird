@@ -1,17 +1,25 @@
 CountDownState = Class{__includes = BaseState}
 
+COUNTDOWN_TIME = 0.75
+
 function CountDownState:init()
-  self.countdown = 0.1
+  self.count = 3
+  self.timer = 0
 end
 
 function CountDownState:update(dt)
-  if self.countdown > 3 then
-    gStateMachine:change('play')
+  self.timer = self.timer + dt
+  if self.timer > COUNTDOWN_TIME then
+    self.count = self.count - 1
+    self.timer = self.timer % COUNTDOWN_TIME
+
+    if self.count == 0 then
+      gStateMachine:change('play')
+    end
   end
-  self.countdown = self.countdown + dt
 end
 
 function CountDownState:render()
   love.graphics.setFont(hugeFont) 
-  love.graphics.printf(tostring(math.ceil(self.countdown)), 0, 100, VIRTUAL_WIDTH, 'center')
+  love.graphics.printf(tostring(math.ceil(self.count)), 0, 120, VIRTUAL_WIDTH, 'center')
 end
