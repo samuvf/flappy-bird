@@ -7,8 +7,6 @@ PIPE_HEIGHT = 288
 BIRD_WIDTH = 38
 BIRD_HEIGHT = 24
 
-score = 0
-
 function PlayState:init() 
   self.bird = Bird()
   self.pipePairs = {}
@@ -17,6 +15,8 @@ function PlayState:init()
   -- stores the last y as to no repeat the same in the next pipe
   -- creating a more dynamic pipes reendering
   self.lastY = -PIPE_HEIGHT + math.random(80) + 20
+
+  self.score = 0
 end
 
 function PlayState:update(dt)
@@ -30,27 +30,34 @@ function PlayState:update(dt)
     table.insert(self.pipePairs, PipePair(y))
     self.spawnTime = 0
   end
-  -- keep updating each pipePair present in the table 
+
   for k, pipePair in pairs(self.pipePairs) do
+    -- increase score by 1 each time the bird passes through a pipepair
+    if self.bird.x > pipePair.x + PIPE_WIDTH then
+      if not pipePair.scored then
+        self.score = self.score + 1
+        pipePair.scored = true
+      end
+    end
+    -- keep updating each pipePair present in the table 
     pipePair:update(dt)
   end
   -- check for collision between bird and pipes
   for k, pipePair in pairs(self.pipePairs) do
     for l, pipe in pairs(pipePair.pipes) do
       if self.bird:collision(pipe) then
-        gStateMachine:change('gameover')
+        gStateMachine:change('gameover', {
+          score = self.score
+        })
       end
     end
   end
-  -- increase score by 1 each time the bird passes through a pipepair
-  for k, pipePair in pairs(self.pipePairs) do
-    if pipePair.x + PIPE_WIDTH < VIRTUAL_WIDTH/2 and pipePair.x > 185 then
-      score = score + 1
-    end
-  end
+  
   -- gameover if we get to the ground
   if self.bird.y + BIRD_HEIGHT > VIRTUAL_HEIGHT or self.bird.y < 0 then
-    gStateMachine:change('gameover')
+    gStateMachine:change('gameover', {
+      score = self.score
+    })
   end
   -- removes pipePair from table if it has trespassed the left edge of the screen
   -- another loop is recommended, beacause removing elements 
@@ -70,6 +77,6 @@ function PlayState:render()
   end
   self.bird:render()
 
-  love.graphics.print('Score: ' .. tostring(score), 10, 10)
+  love.graphics.print('Score: ' .. tostring(self.score), 10, 10)
 end
 
