@@ -9,6 +9,7 @@ require 'StateMachine'
 require 'states/PlayState'
 require 'states/TitleScreenState'
 require 'states/GameOverState'
+require 'states/CountDownState'
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -50,6 +51,7 @@ function love.load()
     ['title'] = function() return  TitleScreenState() end,
     ['play'] = function() return PlayState() end,
     ['gameover'] = function() return GameOverState() end,
+    ['countdown'] = function() return CountDownState() end
   }
   gStateMachine:change('title')
 
