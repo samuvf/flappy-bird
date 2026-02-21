@@ -37,6 +37,7 @@ function PlayState:update(dt)
       if not pipePair.scored then
         self.score = self.score + 1
         pipePair.scored = true
+        sounds['score']:play()
       end
     end
     -- keep updating each pipePair present in the table 
@@ -46,6 +47,8 @@ function PlayState:update(dt)
   for k, pipePair in pairs(self.pipePairs) do
     for l, pipe in pairs(pipePair.pipes) do
       if self.bird:collision(pipe) then
+        sounds['explosion']:play()
+        sounds['hurt']:play()
         gStateMachine:change('gameover', {
           score = self.score
         })
@@ -55,6 +58,8 @@ function PlayState:update(dt)
   
   -- gameover if we get to the ground
   if self.bird.y + BIRD_HEIGHT > VIRTUAL_HEIGHT or self.bird.y < 0 then
+    sounds['explosion']:play()
+    sounds['hurt']:play()
     gStateMachine:change('gameover', {
       score = self.score
     })

@@ -18,6 +18,7 @@ function Bird:update(dt)
 
   if love.keyboard.wasPressed('space') or love.mouse.isDown(1) then
     self.dy = -5
+    sounds['jump']:play()
   end
 end
 
