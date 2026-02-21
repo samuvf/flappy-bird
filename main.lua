@@ -6,6 +6,8 @@ require 'Pipe'
 require 'PipePair'
 
 require 'StateMachine'
+
+require 'states/BaseState'
 require 'states/PlayState'
 require 'states/TitleScreenState'
 require 'states/GameOverState'
