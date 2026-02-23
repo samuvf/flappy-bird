@@ -69,6 +69,7 @@ function love.load()
   gStateMachine:change('title')
 
   love.keyboard.keysPressed = {} -- table to store pressed keys
+  love.mouse.mousePressed = {} -- table to store pressed mouse buttons
 end
 
 function love.resize(w, h)
@@ -82,10 +83,11 @@ function love.update(dt)
   gStateMachine:update(dt)
 
   love.keyboard.keysPressed = {} -- flushes whichever key is in the table as to not keep dy = -5 forever
+  love.mouse.mousePressed = {} -- flushes whichever button is in the table as to not keep dy = -5 forever
 end
 
 function love.keypressed(key)
-  love.keyboard.keysPressed[key] = true -- stores key pressed to the table andd assigns it to true
+  love.keyboard.keysPressed[key] = true -- stores key pressed to the table and assigns it to true
 
   if key == 'escape' then
     love.event.quit()
@@ -94,6 +96,14 @@ end
 
 function love.keyboard.wasPressed(key)
   return love.keyboard.keysPressed[key] -- returns true or false depending if key exist in the table
+end
+
+function love.mousepressed(x, y, button)
+  love.mouse.mousePressed[button] = true -- stores button pressed to the table and assigns it to true
+end
+
+function love.mouse.wasPressed(button)
+  return love.mouse.mousePressed[button] -- returns true or false depending if button exist in the table
 end
 
 function love.draw()
