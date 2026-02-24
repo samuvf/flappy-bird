@@ -4,7 +4,7 @@ function PipePair:init(y)
   self.x = VIRTUAL_WIDTH + 32 -- pipe pair will spawn 32 pixels after the right side of the screen
   self.y = y
 
-  self.gap_height = math.random(65, 85)
+  self.gap_height = math.random(70, 90)
 
   self.pipes = {
     ['top'] = Pipe('top', self.y),

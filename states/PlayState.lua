@@ -10,8 +10,9 @@ BIRD_HEIGHT = 24
 function PlayState:init() 
   self.bird = Bird()
   self.pipePairs = {}
-  self.spawnTime = 0
+  self.timer = 0
 
+  self.spawTime = 2
   -- stores the last y as to no repeat the same in the next pipe
   -- creating a more dynamic pipes reendering
   self.lastY = -PIPE_HEIGHT + math.random(80) + 20
@@ -21,14 +22,15 @@ end
 
 function PlayState:update(dt)
   -- every 2 seconds insert a Pipe into the table
-  self.spawnTime = self.spawnTime + dt
-  if self.spawnTime > math.random(2,6) then
+  self.timer = self.timer + dt
+  if self.timer > self.spawTime then
     -- defines y limites for the pipe to spawn
     -- and where the gap can begin
     local y = math.max(-PIPE_HEIGHT + 40, math.min(self.lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
     self.lastY = y
     table.insert(self.pipePairs, PipePair(y))
-    self.spawnTime = 0
+    self.timer = 0
+    self.spawTime = math.random(2, 4)
   end
 
   for k, pipePair in pairs(self.pipePairs) do
