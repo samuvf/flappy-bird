@@ -1,6 +1,6 @@
 PipePair = Class {}
 
-local GAP_HEIGTH = 90
+local GAP_HEIGTH = math.random(60, 80)
 
 function PipePair:init(y) 
   self.x = VIRTUAL_WIDTH + 32 -- pipe pair will spawn 32 pixels after the right side of the screen

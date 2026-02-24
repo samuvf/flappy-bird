@@ -25,7 +25,7 @@ function PlayState:update(dt)
   if self.spawnTime > 2 then
     -- defines y limites for the pipe to spawn
     -- and where the gap can begin
-    local y = math.max(-PIPE_HEIGHT + 50, math.min(self.lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
+    local y = math.max(-PIPE_HEIGHT + 40, math.min(self.lastY + math.random(-20,20), VIRTUAL_HEIGHT -90 -PIPE_HEIGHT))
     self.lastY = y
     table.insert(self.pipePairs, PipePair(y))
     self.spawnTime = 0
