@@ -46,7 +46,8 @@ function love.load()
     ['explosion'] = love.audio.newSource('sound/explosion.wav', 'static'),
     ['hurt'] = love.audio.newSource('sound/hurt.wav', 'static'),
     ['score'] = love.audio.newSource('sound/score.wav', 'static'),
-    ['music'] = love.audio.newSource('sound/marios_way.mp3', 'static')
+    ['music'] = love.audio.newSource('sound/marios_way.mp3', 'static'),
+    ['pause'] = love.audio.newSource('sound/pause.wav', 'static')
   }
 
   sounds['music']:setLooping(true)
@@ -64,7 +65,7 @@ function love.load()
     ['title'] = function() return  TitleScreenState() end,
     ['play'] = function() return PlayState() end,
     ['gameover'] = function() return GameOverState() end,
-    ['countdown'] = function() return CountDownState() end
+    ['countdown'] = function() return CountDownState() end,
   }
   gStateMachine:change('title')
 
